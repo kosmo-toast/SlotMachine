@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 Slot Machine 🎰</title>
+    <style>
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #2C0B59;
+            color: white;
+            text-align: center;
+            padding: 50px;
+        }
+
+        h1 {
+            font-size: 50px;
+            color: #C71585;
+            text-shadow: 2px 2px 5px rgba(199, 21, 133, 0.7);
+        }
+
+        #coins {
+            font-size: 30px;
+            color: #FFD700;
+        }
+
+        .slot-container {
+            margin: 30px auto;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 60px;
+            padding: 20px;
+            background-color: #52057B;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(199, 21, 133, 0.8);
+        }
+
+        .slot {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 100px;
+            border: 5px solid #C71585;
+            border-radius: 15px;
+            background-color: #6A0DAD;
+            font-size: 80px;
+            box-shadow: 0 0 15px rgba(199, 21, 133, 0.7);
+            transition: transform 0.5s ease;
+        }
+
+        button {
+            background-color: #8A2BE2;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #6A0DAD;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 20px;
+            margin: 10px;
+            width: 80px;
+            text-align: center;
+            border: 2px solid #C71585;
+            border-radius: 5px;
+        }
+
+        /* Gewinnmeldungen */
+        .win-message {
+            font-size: 30px;
+            color: #FFD700;
+            margin-top: 20px;
+            text-shadow: 2px 2px 10px rgba(199, 21, 133, 0.8);
+        }
+
+        .lose-message {
+            font-size: 30px;
+            color: red;
+            margin-top: 20px;
+        }
+
+        /* Textfeld am unteren Rand */
+        #footer {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            color: #C71585;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>🎰 Slot Machine 🎰</h1>
+    <p id="coins">Coins: 500</p>
+
+    <div class="slot-container">
+        <div id="slot1" class="slot">🍒</div>
+        <div id="slot2" class="slot">🍋</div>
+        <div id="slot3" class="slot">🔔</div>
+    </div>
+
+    <input type="number" id="bet" value="10" min="1">
+    <button id="spinBtn">Spin</button>
+
+    <div id="result" class="win-message" style="display:none;"></div>
+    <div id="loseResult" class="lose-message" style="display:none;"></div>
+
+    
+    <div id="footer">by Kosmo Toast</div>
+
+    <script>
+        const symbols = ["🍒", "🍋", "🔔", "💎", "🍉"];
+        let coins = 500;
+        const slots = document.querySelectorAll('.slot');
+        const resultElement = document.getElementById("result");
+        const loseResultElement = document.getElementById("loseResult");
+
+        function getRandomSymbol() {
+            return symbols[Math.floor(Math.random() * symbols.length)];
+        }
+
+        function spinSlots() {
+            const betAmount = parseInt(document.getElementById("bet").value);
+
+            if (coins < betAmount) {
+                alert("Not enough coins!");
+                return;
+            }
+
+            coins -= betAmount;
+            document.getElementById("coins").textContent = "Coins: " + coins;
+
+            
+            let spinning = true;
+            let count = 0;
+
+            const spinInterval = setInterval(() => {
+                if (spinning) {
+                    slots.forEach((slot, index) => {
+                        slot.textContent = getRandomSymbol();
+                        slot.style.transform = `rotate(${Math.random() * 10}deg)`;
+                    });
+                    count++;
+                    if (count >= 10) {
+                        spinning = false;
+                    }
+                }
+            }, 100);
+
+            setTimeout(() => {
+                clearInterval(spinInterval);
+                
+                const slotResults = Array.from(slots).map(slot => slot.textContent);
+                let multiplier = 1;
+                let winAmount = 0;
+
+                if (slotResults[0] === slotResults[1] && slotResults[0] === slotResults[2]) {
+                    multiplier = 2; 
+                    winAmount = betAmount * multiplier; 
+                } else if (slotResults[0] === slotResults[1] || slotResults[0] === slotResults[2] || slotResults[1] === slotResults[2]) {
+                    multiplier = 1.5; 
+                    winAmount = betAmount * multiplier; 
+                } else {
+                    multiplier = 1.5; 
+                    winAmount = -(betAmount + (betAmount / 2)); 
+                }
+
+                
+                coins += winAmount;
+
+                
+                if (multiplier === 2) {
+                    resultElement.textContent = `You win! 🎉 You got ${winAmount} coins (x2)!`;
+                    resultElement.style.display = 'block';
+                    loseResultElement.style.display = 'none';
+                } else if (multiplier === 1.5 && winAmount > 0) {
+                    resultElement.textContent = `You win! 🎉 You got ${winAmount} coins (x1.5)!`;
+                    resultElement.style.display = 'block';
+                    loseResultElement.style.display = 'none';
+                } else {
+                    loseResultElement.textContent = `You lost! 😞 You lost ${betAmount + betAmount / 2} coins (x1.5)!`;
+                    loseResultElement.style.display = 'block';
+                    resultElement.style.display = 'none';
+                }
+
+                document.getElementById("coins").textContent = "Coins: " + coins;
+            }, 1500); 
+        }
+
+        document.getElementById("spinBtn").addEventListener("click", spinSlots);
+
+    </script>
+
+</body>
+</html>
