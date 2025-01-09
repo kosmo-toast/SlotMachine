@@ -17,3 +17,8 @@ Keine gleichen Symbole → Verlust: 10 Coins + (10 Coins / 2) = 15 Coins verlore
 
 Here are some pictures:
 ![image](https://github.com/user-attachments/assets/38737eb0-b8bd-43e3-9993-ce2fefb1f30c)
+
+
+This game was created by kosmo toast and I hope you like it!
+If you have a question you can contact me.
+Please report bugs so I can fix them as soon as possible!
