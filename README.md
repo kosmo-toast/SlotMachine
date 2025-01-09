@@ -20,5 +20,9 @@ Here are some pictures:
 
 
 This game was created by kosmo toast and I hope you like it!
+
+
 If you have a question you can contact me.
+
+
 Please report bugs so I can fix them as soon as possible!
